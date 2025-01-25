@@ -24,7 +24,7 @@ trait ResponderTrait {
         ], $statusCode);
     }
 
-    private function internalError(string $status = 'error', $data, string $message = "Internal server error.", int $statusCode = 500): JsonResponse {
+    private function internalError(string $status = 'error', $data = null, string $message = "Internal server error.", int $statusCode = 500): JsonResponse {
         return Response()->json([
             'ststus' => $status,
             'data' => $data,

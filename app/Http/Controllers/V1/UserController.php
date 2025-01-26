@@ -71,7 +71,7 @@ class UserController extends Controller
 
     public function update(CreateUserRequests $request, $id) {
         try {
-            $user = $this->userService->update($id, $request->data);
+            $user = $this->userService->update($id, $request->all());
             if ($user) {
                 return $this->positiveResponse('success', $user, 'User updated successfully');
             } else {
@@ -87,11 +87,7 @@ class UserController extends Controller
     public function delete($id) {
         try {
             $user = $this->userService->delete($id);
-            if ($user) {
-                return $this->positiveResponse('success', $user, 'User deleted successfully');
-            } else {
-                return $this->negativeResponse('error', null, 'User not deleted', 404);
-            }
+            return $this->positiveResponse('success', $user, 'User deleted successfully');
         } catch (\Exception $e) {
             \Log::info("Error in function: " . __FUNCTION__);
             \Log::error($e->getMessage());

@@ -3,11 +3,16 @@
 namespace App\Repositories;
 
 use App\Models\V1\User;
+use App\Repositories\UserRepositoryInterface;
+use Illuminate\Support\Facades\Cache;
 
-class UserRepository implements UserRepositoryInterface {
+class UserRepository implements UserRepositoryInterface{
 
+    // When Using this function, we have cached the user so that this function will return the user from cache if it is present in cache.ssss
     public function all() {
-        return User::all();
+        Cache::remember('users', 60, function () {
+            return User::all();
+        });
     }
 
     public function find(int $id) {

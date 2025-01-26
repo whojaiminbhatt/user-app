@@ -32,5 +32,21 @@ trait ResponderTrait {
         ], $statusCode);
 
     }
+
+    private function validation($errors): JsonResponse {
+        return Response()->json([
+            'status' => 'error',
+            'data' => $errors,
+            'message' => 'Validation error'
+        ], 422);
+    }
+
+    private function aunthorizationError(string $status = 'error', $data = null, string $message = "Unauthorized", int $statusCode = 401): JsonResponse {
+        return Response()->json([
+            'status' => $status,
+            'data' => $data,
+            'message' => $message
+        ], $statusCode);
+    }
 }
 ?>

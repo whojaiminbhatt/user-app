@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\V1\UserController;
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Controllers\V1\AuthController;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,14 +19,23 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 
+Route::post('login', [AuthController::class, 'login']);
+Route::post('logout', [AuthController::class, 'logout']);
+Route::post('refresh', [AuthController::class, 'refresh']);
 
 Route::middleware('auth:api')->group(function () {
-
-    Route::prefix('users')->namespace('V1/')->group(function () {
+    
+    Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'getUsers']);
         Route::get('/{id}', [UserController::class, 'getUserById']);
         Route::post('/', [UserController::class, 'add']);
         Route::put('{id}', [UserController::class, 'update']);
         Route::delete('{id}', [UserController::class, 'delete']);
     });
+
 });
+
+Route::fallback(function () {
+    return response()->json([
+        'message' => 'Route not found.',
+    ], 404); });

@@ -7,12 +7,16 @@ use App\Http\Requests\CreateUserRequests;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use App\Traits\ResponderTrait;
+use App\Traits\UserTrait;
 
 class UserController extends Controller
 {
-    use ResponderTrait;
+    use ResponderTrait, UserTrait;
 
-    public function __construct(protected UserService $userService) {}
+    protected UserService $userService;
+    public function __construct(UserService $userService) {
+        $this->userService = $userService;
+    }
 
     //Implementing Repository design pattern here. As the model which has sensitive information should not be directly exposed.
     /* get function which will return all user present in DB.
@@ -21,7 +25,7 @@ class UserController extends Controller
     public function getUsers(): JsonResponse {
         try {
         $users = $this->userService->all();
-        
+       
         return $this->positiveResponse('success', $users, 'succcess');
         } catch (\Exception $e) {
             \Log::info("Error in function: " . __FUNCTION__);
@@ -30,6 +34,10 @@ class UserController extends Controller
         }
     }
 
+    /* get function which will return user by id.
+        @param $id
+        @returns JsonResponses
+    */
     public function getUserById($id) {
         try {
             $checkIfUserExissts = $this->userService->find($id);
@@ -47,7 +55,8 @@ class UserController extends Controller
 
     public function add(CreateUserRequests $request) {
         try {
-            $user = $this->userService->add($request->all());
+            
+            $user = $this->userService->add($this->userDataMapper($request->all()));
             if ($user) {
                 return $this->positiveResponse('success', $user, 'User added successfully');
             } else {
@@ -89,6 +98,5 @@ class UserController extends Controller
             return $this->internalError();
         }
     }
-
 
 }

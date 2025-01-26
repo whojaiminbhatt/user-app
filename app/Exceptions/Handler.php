@@ -2,8 +2,11 @@
 
 namespace App\Exceptions;
 
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Auth;
 use Throwable;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class Handler extends ExceptionHandler
 {
@@ -23,8 +26,12 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->reportable(function (Exception $e) {
+            if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+                return response()->json([
+                    'message' => 'Unauthenticated',
+                ], 401);
+            }
         });
     }
 }
